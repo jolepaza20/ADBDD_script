@@ -1,0 +1,606 @@
+/*==============================================================*/
+/* DBMS name:      Microsoft SQL Server 2008                    */
+/* Created on:     7/7/2021 15:46:17                            */
+/*==============================================================*/
+
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('ATENCIONMEDICA') and o.name = 'FK_ATENCION_HACE_DOCTOR')
+alter table ATENCIONMEDICA
+   drop constraint FK_ATENCION_HACE_DOCTOR
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('ATENCIONMEDICA') and o.name = 'FK_ATENCION_PERCIBE_BENEFICI')
+alter table ATENCIONMEDICA
+   drop constraint FK_ATENCION_PERCIBE_BENEFICI
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('ATENCIONMEDICA') and o.name = 'FK_ATENCION_RECIBE_CLIENTE')
+alter table ATENCIONMEDICA
+   drop constraint FK_ATENCION_RECIBE_CLIENTE
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('BENEFICIARIO') and o.name = 'FK_BENEFICI_TIENE_CLIENTE')
+alter table BENEFICIARIO
+   drop constraint FK_BENEFICI_TIENE_CLIENTE
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('CLIENTE') and o.name = 'FK_CLIENTE_ATIENDE_EMPLEADO')
+alter table CLIENTE
+   drop constraint FK_CLIENTE_ATIENDE_EMPLEADO
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('CLIENTE') and o.name = 'FK_CLIENTE_CONTRATA_PLANSEGU')
+alter table CLIENTE
+   drop constraint FK_CLIENTE_CONTRATA_PLANSEGU
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('PAGO') and o.name = 'FK_PAGO_REALIZA_CLIENTE')
+alter table PAGO
+   drop constraint FK_PAGO_REALIZA_CLIENTE
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('REEMBOLSO') and o.name = 'FK_REEMBOLS_COBRA_CLIENTE')
+alter table REEMBOLSO
+   drop constraint FK_REEMBOLS_COBRA_CLIENTE
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('REEMBOLSO') and o.name = 'FK_REEMBOLS_GENERA_ATENCION')
+alter table REEMBOLSO
+   drop constraint FK_REEMBOLS_GENERA_ATENCION
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('ATENCIONMEDICA')
+            and   name  = 'PERCIBE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index ATENCIONMEDICA.PERCIBE_FK
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('ATENCIONMEDICA')
+            and   name  = 'RECIBE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index ATENCIONMEDICA.RECIBE_FK
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('ATENCIONMEDICA')
+            and   name  = 'HACE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index ATENCIONMEDICA.HACE_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('ATENCIONMEDICA')
+            and   type = 'U')
+   drop table ATENCIONMEDICA
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('BENEFICIARIO')
+            and   name  = 'TIENE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index BENEFICIARIO.TIENE_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('BENEFICIARIO')
+            and   type = 'U')
+   drop table BENEFICIARIO
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('CLIENTE')
+            and   name  = 'CONTRATA_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index CLIENTE.CONTRATA_FK
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('CLIENTE')
+            and   name  = 'ATIENDE_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index CLIENTE.ATIENDE_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('CLIENTE')
+            and   type = 'U')
+   drop table CLIENTE
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('DOCTOR')
+            and   type = 'U')
+   drop table DOCTOR
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('EMPLEADO')
+            and   type = 'U')
+   drop table EMPLEADO
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('PAGO')
+            and   name  = 'REALIZA_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index PAGO.REALIZA_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('PAGO')
+            and   type = 'U')
+   drop table PAGO
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('PLANSEGURO')
+            and   type = 'U')
+   drop table PLANSEGURO
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('REEMBOLSO')
+            and   name  = 'COBRA_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index REEMBOLSO.COBRA_FK
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('REEMBOLSO')
+            and   name  = 'GENERA_FK'
+            and   indid > 0
+            and   indid < 255)
+   drop index REEMBOLSO.GENERA_FK
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('REEMBOLSO')
+            and   type = 'U')
+   drop table REEMBOLSO
+go
+
+/*==============================================================*/
+/* Table: ATENCIONMEDICA                                        */
+/*==============================================================*/
+create table ATENCIONMEDICA (
+   CODATENMED           int                  not null,
+   CODDOC               int                  null,
+   CODCLIENTE           int                  null,
+   CODBENE              int                  null,
+   FECHATENMED          date                 null,
+   DESCATENMED          varchar(100)         null,
+   VALOR                decimal(18,2)        null,
+   constraint PK_ATENCIONMEDICA primary key nonclustered (CODATENMED)
+)
+go
+
+/*==============================================================*/
+/* Index: HACE_FK                                               */
+/*==============================================================*/
+create index HACE_FK on ATENCIONMEDICA (
+CODDOC ASC
+)
+go
+
+/*==============================================================*/
+/* Index: RECIBE_FK                                             */
+/*==============================================================*/
+create index RECIBE_FK on ATENCIONMEDICA (
+CODCLIENTE ASC
+)
+go
+
+/*==============================================================*/
+/* Index: PERCIBE_FK                                            */
+/*==============================================================*/
+create index PERCIBE_FK on ATENCIONMEDICA (
+CODBENE ASC
+)
+go
+
+/*==============================================================*/
+/* Table: BENEFICIARIO                                          */
+/*==============================================================*/
+create table BENEFICIARIO (
+   CODBENE              int                  not null,
+   CODCLIENTE           int                  null,
+   CEDBENE              varchar(10)          null,
+   NOM1BENE             varchar(50)          null,
+   NOM2BENE             varchar(50)          null,
+   APE1BENE             varchar(50)          null,
+   APE2BENE             varchar(50)          null,
+   DIRBENE              varchar(50)          null,
+   TELBENE              varchar(10)          null,
+   constraint PK_BENEFICIARIO primary key nonclustered (CODBENE)
+)
+go
+
+/*==============================================================*/
+/* Index: TIENE_FK                                              */
+/*==============================================================*/
+create index TIENE_FK on BENEFICIARIO (
+CODCLIENTE ASC
+)
+go
+
+/*==============================================================*/
+/* Table: CLIENTE                                               */
+/*==============================================================*/
+create table CLIENTE (
+   CODCLIENTE           int                  not null,
+   CODEMPLE             int                  null,
+   CODPLAN              int                  null,
+   CEDCLIENTE           varchar(10)          null,
+   NOM1CLIENTE          varchar(50)          null,
+   NOM2CLIENTE          varchar(50)          null,
+   APE1CLIENTE          varchar(50)          null,
+   APE2CLIENTE          varchar(50)          null,
+   DIRCLIENTE           varchar(50)          null,
+   TELCLIENTE           varchar(10)          null,
+   CTABANCLIENTE        varchar(10)          null,
+   FECREGCLIENTE        date                 null,
+   constraint PK_CLIENTE primary key nonclustered (CODCLIENTE)
+)
+go
+
+/*==============================================================*/
+/* Index: ATIENDE_FK                                            */
+/*==============================================================*/
+create index ATIENDE_FK on CLIENTE (
+CODEMPLE ASC
+)
+go
+
+/*==============================================================*/
+/* Index: CONTRATA_FK                                           */
+/*==============================================================*/
+create index CONTRATA_FK on CLIENTE (
+CODPLAN ASC
+)
+go
+
+/*==============================================================*/
+/* Table: DOCTOR                                                */
+/*==============================================================*/
+create table DOCTOR (
+   CODDOC               int                  not null,
+   NOM1DOC              varchar(50)          null,
+   NOM2DOC              varchar(50)          null,
+   APE1DOC              varchar(50)          null,
+   APE2DOC              varchar(50)          null,
+   TELDOC               varchar(10)          null,
+   constraint PK_DOCTOR primary key nonclustered (CODDOC)
+)
+go
+
+/*==============================================================*/
+/* Table: EMPLEADO                                              */
+/*==============================================================*/
+create table EMPLEADO (
+   CODEMPLE             int                  not null,
+   NOM1EMPLE            varchar(50)          null,
+   NOM2EMPLE            varchar(50)          null,
+   APE1EMPLE            varchar(50)          null,
+   APE2EMPLE            varchar(50)          null,
+   DIREMPLE             varchar(50)          null,
+   TELEMPLE             varchar(10)          null,
+   FECNACEMPLE          date                 null,
+   FECINGLABEMPLE       date                 null,
+   constraint PK_EMPLEADO primary key nonclustered (CODEMPLE)
+)
+go
+
+/*==============================================================*/
+/* Table: PAGO                                                  */
+/*==============================================================*/
+create table PAGO (
+   CODPAGO              int                  not null,
+   CODCLIENTE           int                  null,
+   FECHPAGO1            date                 null,
+   FECHPAGO2            date                 null,
+   FECHPAGO3            date                 null,
+   FECHPAGO4            date                 null,
+   FECHPAGO5            date                 null,
+   FECHPAGO6            date                 null,
+   FECHPAGO7            date                 null,
+   constraint PK_PAGO primary key nonclustered (CODPAGO)
+)
+go
+
+/*==============================================================*/
+/* Index: REALIZA_FK                                            */
+/*==============================================================*/
+create index REALIZA_FK on PAGO (
+CODCLIENTE ASC
+)
+go
+
+/*==============================================================*/
+/* Table: PLANSEGURO                                            */
+/*==============================================================*/
+create table PLANSEGURO (
+   CODPLAN              int                  not null,
+   NOMPLAN              varchar(50)          null,
+   VALPLAN              decimal(18,2)        null,
+   REEMPLAN             varchar(3)           null,
+   CUBREPLAN            varchar(100)         null,
+   constraint PK_PLANSEGURO primary key nonclustered (CODPLAN)
+)
+go
+
+/*==============================================================*/
+/* Table: REEMBOLSO                                             */
+/*==============================================================*/
+create table REEMBOLSO (
+   CODREEM              int                  not null,
+   CODATENMED           int                  null,
+   CODCLIENTE           int                  null,
+   FECHREEM             date                 null,
+   VALREEM              decimal(18,2)        null,
+   constraint PK_REEMBOLSO primary key nonclustered (CODREEM)
+)
+go
+
+/*==============================================================*/
+/* Index: GENERA_FK                                             */
+/*==============================================================*/
+create index GENERA_FK on REEMBOLSO (
+CODATENMED ASC
+)
+go
+
+/*==============================================================*/
+/* Index: COBRA_FK                                              */
+/*==============================================================*/
+create index COBRA_FK on REEMBOLSO (
+CODCLIENTE ASC
+)
+go
+
+alter table ATENCIONMEDICA
+   add constraint FK_ATENCION_HACE_DOCTOR foreign key (CODDOC)
+      references DOCTOR (CODDOC)
+go
+
+alter table ATENCIONMEDICA
+   add constraint FK_ATENCION_PERCIBE_BENEFICI foreign key (CODBENE)
+      references BENEFICIARIO (CODBENE)
+go
+
+alter table ATENCIONMEDICA
+   add constraint FK_ATENCION_RECIBE_CLIENTE foreign key (CODCLIENTE)
+      references CLIENTE (CODCLIENTE)
+go
+
+alter table BENEFICIARIO
+   add constraint FK_BENEFICI_TIENE_CLIENTE foreign key (CODCLIENTE)
+      references CLIENTE (CODCLIENTE)
+go
+
+alter table CLIENTE
+   add constraint FK_CLIENTE_ATIENDE_EMPLEADO foreign key (CODEMPLE)
+      references EMPLEADO (CODEMPLE)
+go
+
+alter table CLIENTE
+   add constraint FK_CLIENTE_CONTRATA_PLANSEGU foreign key (CODPLAN)
+      references PLANSEGURO (CODPLAN)
+go
+
+alter table PAGO
+   add constraint FK_PAGO_REALIZA_CLIENTE foreign key (CODCLIENTE)
+      references CLIENTE (CODCLIENTE)
+go
+
+alter table REEMBOLSO
+   add constraint FK_REEMBOLS_COBRA_CLIENTE foreign key (CODCLIENTE)
+      references CLIENTE (CODCLIENTE)
+go
+
+alter table REEMBOLSO
+   add constraint FK_REEMBOLS_GENERA_ATENCION foreign key (CODATENMED)
+      references ATENCIONMEDICA (CODATENMED)
+go
+
+/*Tablas*/
+select * from ATENCIONMEDICA;
+select * from BENEFICIARIO;
+select * from CLIENTE;
+select * from DOCTOR;
+select * from EMPLEADO;
+select * from PAGO;
+select * from PLANSEGURO;
+select * from REEMBOLSO;
+
+/*INSERCION DE DATOS EN LA TABLA EMPLEADO*/
+insert into EMPLEADO values (1, 'Marco', 'Andres', 'Macias', 'Mera', 'calle 110 ave. 109', '0927384612', '1992-03-15', '2020-12-20'),
+(2, 'Antonio', 'Leonel', 'Plua', 'Ortega', 'calle 13 ave. 11', '0912374821', '1990-07-14', '2021-01-15'),
+(3, 'Maria', 'Magdalena', 'Cruz', 'Rojas', 'calle 152 ave. 150', '0922459274', '1998-12-12', '2021-12-01'),
+(4, 'Juan', 'Jose', 'Delgado', 'Lopez', 'calle 331 ave 329', '0923741957', '1995-06-30', '2021-01-15'),
+(5, 'Angie', 'María', 'Lopez', 'Fuentes', 'calle 9 ave. 11', '0937465918', '1999-05-25', '2021-01-02'),
+(6, 'Roxana', 'Mirexi', 'Cedeño', 'Centeno', 'calle 92 avenida 89', '0935481927', '1982-09-16', '2020-12-19'),
+(7, 'Rafael', 'Eduardo', 'Correa', 'Delgado', 'calle 15 ave. 16', '0988244213', '1980-11-11', '2020-12-01'),
+(8, 'Miriam', 'Tatiana', 'Zambrano', 'Valle', 'calle 26 ave. 25', '0999232441', '1995-08-08', '2020-11-15'),
+(9, 'Eduardo', 'Maximiliano', 'Macias', 'Mera', 'calle 114 ave. 112', '0921857633', '1994-07-14', '2020-11-10'),
+(10, 'Joel', 'Alejandro', 'Meza', 'Macias', 'calle 309 ave. 311', '0923222489', '1995-06-19', '2021-01-15'),
+(11, 'Angelica', 'Alejandra', 'Lopez', 'Fuentes', 'calle 9 ave. 11', '0982131490', '1998-02-15', '2020-12-10'),
+(12, 'Fabricio', 'Roman', 'Quijije', 'Moreira', 'calle 116 ave. 114', '0947381292', '1996-02-01', '2020-12-06'),
+(13, 'Andy', 'Jose', 'Muentes', 'Macias', 'calle 221 ave. 221', '0988457123', '1990-10-16', '2021-01-10'),
+(14, 'Dayanna', 'Lisseth', 'Bodero', 'Cordoba', 'calle 213 ave. 214', '0984561123', '1997-09-03', '2021-01-06'),
+(15, 'Naomi', 'Adriana', 'Rivera', 'Mendoza', 'calle 92 ave. 91', '0946581923', '1989-11-15', '2020-12-19');
+
+/*INSERCION DE DATOS EN LA TABLA DOCTOR*/
+insert into DOCTOR values (1, 'Daniel', 'Larry', 'Delgado', 'Delgado', '0983273819'),
+(2, 'Darwin', 'Josue', 'Parrales', 'Lucas', '0937491289'), 
+(3, 'Melissa', 'Lisseth', 'Mendoza', 'Paz', '0947381295'), 
+(4, 'Alejandro', 'Jonathan', 'Vera', 'Cedeño', '0947391235'), 
+(5, 'Alicia', 'Abigail', 'Alvia', 'Delgado', '0932832176'), 
+(6, 'Wilian', 'Richard', 'Delgado', 'Muentes', '0943843912'),
+(7, 'Robert', 'Wilfrido', 'Moreira', 'Centeno', '0983748212'), 
+(8, 'Abril', 'Maria', 'Mendoza', 'Paz', '0982112398'), 
+(9, 'Juan', 'Alberto', 'Quijije', 'Quintana', '0923756111'), 
+(10, 'Maria', 'Ana', 'Coello', 'Casquete', '099938233'), 
+(11, 'Ana', 'Maria', 'Carrillo', 'Lopez', '0928338218'),
+(12, 'Josue', 'Leonel', 'Parraga', 'Zambrano', '0984429100'), 
+(13, 'Angie', 'Veronica', 'Parraga', 'Zambrano', '0923283132'), 
+(14, 'Katerine', 'Sonia', 'Delgado', 'Macias', '0932832123'), 
+(15, 'Leonel', 'Rodolfo', 'Parraga', 'Mora', '0990008821');
+
+/*INSERCION DE DATOS EN LA TABLA PLANSEGURO*/
+insert into PLANSEGURO values (1, 'Hierro', 25.25, '10%', 'Medicina general'), 
+(2, 'Bronce', 30.35, '15%', 'Medicina general, accidentes'), 
+(3, 'Plata', 41.45, '20%', 'Medicina general, accidentes, operaciones'), 
+(4, 'Oro', 53.45, '30%', 'Medicina general, accidentes, operaciones, muertes'), 
+(5, 'Platino', 67.55, '40%', 'Medicina general, accidentes, operaciones, muertes'),
+(6, 'Diamante', 80.50, '60%', 'Medicina general, accidentes, operaciones, muertes');
+
+/*INSERCION DE DATOS EN LA TABLA CLIENTE*/
+insert into CLIENTE values (1, 1, 6, '1302832945', 'Lionel', 'Andres', 'Messi', 'Cuccittini', 'calle 13 ave. 13', '0923472713', '0048371275', '2021-01-03'),
+(2, 2, 2, '1302834914', 'Juan', 'Roman', 'Riquelme', 'Delgado', 'calle 22 ave. 21', '0938447272', '0003248922', '2021-01-05'),
+(3, 15, 3, '1313495031', 'Fernando', 'Francisco', 'Alonzo', 'Arteaga', 'calle 31 ave. 28', '0999234473', '0340342832', '2021-01-08'),
+(4, 11, 4, '1303423498', 'Yulissa', 'Jamileth', 'Ponce', 'Carrasco', 'calle 42 ave. 43', '0939483473', '0213003923', '2021-01-04'),
+(5, 9, 5, '1304985013', 'Susana', 'Tatiana', 'Delgado', 'Montoya', 'calle 11 ave. 12', '0943845878', '0538920129', '2021-01-02'),
+(6, 15, 1, '1318455302', 'Daniel', 'Darwin', 'Fernandez', 'Alonzo', 'calle 6 ave. 5', '0932615254', '0030402828', '2021-01-04'),
+(7, 8, 1, '1319385343', 'Maria', 'Susana', 'Velez', 'Delgado', 'calle 108 ave. 107', '0942888711', '0230429481', '2021-01-07'),
+(8, 4, 6, '1302031249', 'Neymar', 'da Silva', 'Santos', 'Junior', 'calle 65 ave. 61', '0954838812', '0234849583', '2021-01-08'),
+(9, 3, 6, '1303854578', 'Cristiano', 'Ronaldo', 'dos Santos', 'Aveiro', 'calle 114 ave. 116', '0945831745', '0342893412', '2021-01-03'),
+(10, 7, 5, '1313258571', 'Tatiana', 'Jumira', 'Monserrate', 'Abad', 'calle 311 ave. 310', '0938282727', '0304284328', '2021-01-04'),
+(11, 1, 3, '0984853872', 'Veronica', 'Katerine', 'Zambrano', 'Parraga', 'calle 210 ave. 211', '0948927128', '0112309293', '2021-01-06'),
+(12, 6, 1, '1310920343', 'Valeria', 'Valentina', 'Salame', 'Roca', 'calle 451 ave. 452', '0934288271', '0324002129', '2021-01-09'),
+(13, 12, 2, '0984346714', 'Sofia', 'Katerine', 'Parraga', 'Parrales', 'calle 74 ave. 76', '0945882712', '0234921032', '2021-01-06'),
+(14, 5, 4, '1303589485', 'Jose', 'Antonio', 'Bermello', 'Romero', 'calle 88 ave. 89', '0945723785', '0249202390', '2021-01-02'),
+(15, 1, 4, '1314598586', 'Luis', 'Ivan', 'Sanchez', 'Salazar', 'calle 92 ave. 92', '0948292191', '0324293238', '2021-01-03');
+
+/*INSERCION DE DATOS EN LA TABLA PAGO*/
+insert into PAGO values (1, 1, '2021-01-05', '2021-02-05', '2021-03-05', '2021-04-05', '2021-05-05', '2021-06-05', '2021-07-05'),
+(2, 2, '2021-01-01', '2021-02-01', '2021-03-02', '2021-04-03', '2021-05-02', '2021-06-02', '2021-07-04'),
+(3, 3, '2021-01-05', '2021-02-03', '2021-03-02', '2021-04-04', '2021-05-05', '2021-06-05', '2021-07-06'),
+(4, 4, '2021-01-01', '2021-02-01', '2021-03-01', '2021-04-01', '2021-05-01', '2021-06-01', '2021-07-01'),
+(5, 5, '2021-01-02', '2021-02-01', '2021-03-01', '2021-04-02', '2021-05-03', '2021-06-04', '2021-07-05'),
+(6, 6, '2021-01-04', '2021-02-05', '2021-03-04', '2021-04-06', '2021-05-05', '2021-06-06', '2021-07-05'),
+(7, 7, '2021-01-06', '2021-02-06', '2021-03-05', '2021-04-05', '2021-05-04', '2021-06-05', '2021-07-06'),
+(8, 8, '2021-01-05', '2021-02-04', '2021-03-05', '2021-04-05', '2021-05-02', '2021-06-01', '2021-07-05'),
+(9, 9, '2021-01-05', '2021-02-03', '2021-03-07', '2021-04-08', '2021-05-05', '2021-06-05', '2021-07-06'),
+(10, 10, '2021-01-01', '2021-02-01', '2021-03-02', '2021-04-01', '2021-05-01', '2021-06-02', '2021-07-01'),
+(11, 11, '2021-01-02', '2021-02-02', '2021-03-03', '2021-04-02', '2021-05-02', '2021-06-01', '2021-07-01'),
+(12, 12, '2021-01-04', '2021-02-04', '2021-03-05', '2021-04-04', '2021-05-04', '2021-06-03', '2021-07-04'),
+(13, 13, '2021-01-05', '2021-02-05', '2021-03-06', '2021-04-05', '2021-05-05', '2021-06-05', '2021-07-05'),
+(14, 14, '2021-01-03', '2021-02-03', '2021-03-04', '2021-04-03', '2021-05-03', '2021-06-04', '2021-07-05'),
+(15, 15, '2021-01-05', '2021-02-05', '2021-03-06', '2021-04-05', '2021-05-05', '2021-06-06', '2021-07-07');
+
+/*INSERCION DE DATOS EN LA TABLA BENEFICIARIO*/
+insert into BENEFICIARIO values (1, 1, '1303478843', 'Antonella', 'Maria', 'Roccuzzo', 'Medranda', 'calle 13. ave. 13', '0934982274'),
+(2, 1, '1317338248', 'Thiago', 'Andres', 'Messi', 'Roccuzzo', 'calle 13. ave. 13', '0932948342'),
+(3, 8, '1303498234', 'Maria', 'Magdalena', 'Santos', 'Borre', 'calle 15 ave. 11', '0942382344'),
+(4, 9, '1303948485', 'Georgina', 'Annabelle', 'Rodriguez', 'Rivera', 'calle 114 ave. 116', '0932484273'),
+(5, 9, '1319328474', 'Cristiano', 'Junior', 'dos Santos', 'Rodriguez', 'calle 114 ave. 116', '0932429234'),
+(6, 2, '1314834755', 'Ana', 'Maria', 'Riquelme', 'Manrique', 'calle 12 ave. 21', '0942484432'),
+(7, 14, '1313844775', 'Eduardo', 'Andres', 'Bermello', 'Valencia', 'calle 88 ave. 89', '0934284822'),
+(8, 15, '1309832576', 'Maria', 'Antonieta', 'Sanchez', 'Aguilar', 'calle 92 ave. 92', '0939484247'),
+(9, 3, '1308545776', 'Roberto', 'Jose', 'Alonzo', 'Marquez', 'calle 110 ave. 111', '0934823447'),
+(10, 7, '1305839544', 'Juan', 'Jose', 'Velez', 'Alvarez', 'calle 9 ave. 11', '0908324723'),
+(11, 5, '1315837812', 'Andrea', 'Valentina', 'Suarez', 'Delgado', 'calle 11 ave. 12', '0934023842'),
+(12, 9, '1314938424', 'Aldana', 'Angeline', 'dos Santos', 'Rodriguez', 'calle 114 ave. 116', '0942834242'),
+(13, 10, '1303482432', 'Tatiana', 'Yomira', 'Abad', 'Monserrate', 'calle 311 ave. 310', '0923282472'),
+(14, 4, '1313488827', 'Adriana', 'Julissa', 'Martinez', 'Ponce', 'calle 42 ave. 43', '0932842744'),
+(15, 6, '1303487527', 'Darwin', 'Daniel', 'Fernandez', 'Fernandez', 'calle 15 ave. 16', '0993428472');
+
+/*INSERCION DE DATOS EN LA TABLA ATENCIONMEDICA*/
+insert into ATENCIONMEDICA values (1, 1, 1, 1, '2021-05-01 13:55:11', 'Medicina general', 100.00),
+(2, 2, 1, 2, '2021-02-01', 'Medicina general', 150.00),
+(3, 3, 1, 2, '2021-02-13', 'Medicina general', 75.00),
+(4, 4, 8, 3, '2021-02-28', 'Medicina general', 103.00),
+(5, 5, 8, 3, '2021-01-03', 'Medicina general', 77.00),
+(6, 11, 9, 4, '2021-02-27', 'Medicina general', 114.50),
+(7, 12, 9, 5, '2021-03-15', 'Muerte', 1155.00),
+(8, 13, 9, 12, '2021-03-01', 'Muerte', 1108.40),
+(9, 14, 2, 6, '2021-01-27', 'Medicina general', 200.00),
+(10, 15, 3, 9, '2021-05-30', 'Medicina general', 195.00),
+(11, 1, 4, 14, '2021-04-22', 'Medicina general', 42.75),
+(12, 5, 5, 11, '2021-06-14', 'Medicina general', 31.50),
+(13, 12, 9, 4, '2021-03-29', 'Operacion', 500.00),
+(14, 15, 10, 13, '2021-06-01', 'Operacion', 325.25),
+(15, 6, 15, 8, '2021-01-02', 'Medicina general', 182.76);
+
+/*INSERCION DE DATOS EN LA TABLA REEMBOLSO*/
+insert into REEMBOLSO values (1, 1, 1, '2021-05-13', 60.00),
+(2, 2, 1, '2021-02-11', 90.00),
+(3, 3, 1, '2021-02-28', 45.00),
+(4, 4, 8, '2021-03-15', 61.80),
+(5, 5, 8, '2021-01-21', 46.20),
+(6, 6, 9, '2021-03-15', 68.70),
+(7, 7, 9, '2021-04-01', 693.00),
+(8, 8, 9, '2021-03-05', 665.04),
+(9, 9, 2, '2021-02-11', 30.00),
+(10, 10, 3, '2021-06-15', 39.00),
+(11, 11, 4, '2021-05-06', 12.82),
+(12, 12, 5, '2021-07-01', 12.60),
+(13, 13, 9, '2021-04-22', 300.00),
+(14, 14, 10, '2021-06-16', 130.10),
+(15, 15, 15, '2021-01-15', 54.82);
+
+/*CONSULTAS*/
+/*top de los clientes que mas consultas medicas han tenido*/
+select cliente.nom1cliente, cliente.nom2cliente, cliente.ape1cliente, cliente.ape2cliente, count (atencionmedica.codatenmed)as totalatencionmedica from cliente
+	inner join atencionmedica on cliente.codcliente = atencionmedica.codcliente
+	group by cliente.nom1cliente, cliente.nom2cliente, cliente.ape1cliente, cliente.ape2cliente order by totalatencionmedica desc;
+
+/*cantidad de tipos de seguro que se han vendido*/
+select planseguro.codplan, planseguro.nomplan, count (cliente.codplan) as totalsegurosvendidos from planseguro
+	inner join cliente on planseguro.codplan = cliente.codplan
+	group by planseguro.codplan, planseguro.nomplan order by totalsegurosvendidos desc;
+
+/*cuales son los clientes que cobran el seguro diamante*/
+select cliente.nom1cliente, cliente.nom2cliente, cliente.ape1cliente, cliente.ape2cliente, planseguro.nomplan from cliente
+	inner join planseguro on cliente.codplan = planseguro.codplan where planseguro.codplan = 6
+	group by cliente.nom1cliente, cliente.nom2cliente, cliente.ape1cliente, cliente.ape2cliente, planseguro.nomplan;	
+
+/*top de empleados que han vendido seguros*/
+select empleado.nom1emple, empleado.nom2emple, empleado.ape1emple, empleado.ape2emple, count (cliente.codemple) as totalempleadosventas from empleado
+	inner join cliente on empleado.codemple = cliente.codemple 
+	group by empleado.nom1emple, empleado.nom2emple, empleado.ape1emple, empleado.ape2emple order by totalempleadosventas desc;
